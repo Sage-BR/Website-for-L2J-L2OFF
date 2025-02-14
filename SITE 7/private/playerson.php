@@ -11,6 +11,9 @@ $line = "\n<configs>\n<atualstudio>Cache script by Atualstudio.com</atualstudio>
 
 require_once('private/classes/classStats.php');
 $query = Stats::PlayersOnline();
+	if (!is_array($query)) {
+		$query = []; // Garante que $query seja sempre um array
+	}
 if(count($query) > 0) {
 	$line .= "\n<players>\n<online>".intval($query[0]['quant'])."</online>\n</players>";
 } else {

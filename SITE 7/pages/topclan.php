@@ -49,6 +49,9 @@ if($genNew) {
 		require_once('private/classes/classStats.php');
 		
 		$query = Stats::TopClan($countTopCLAN);
+		if (!is_array($query)) {
+			$query = []; // Garante que $query seja sempre um array
+		}
 		if(count($query) > 0) {
 			
 			for($i=0, $c=count($query); $i < $c; $i++) {

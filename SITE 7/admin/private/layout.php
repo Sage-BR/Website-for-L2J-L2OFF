@@ -234,7 +234,7 @@ if($admin_access != 1) { ?>
 					</li>
 
 					<?php
-					$countNotifis = DB::Executa("SELECT COUNT(*) AS quant FROM site_gallery WHERE vis = '0'", "SITE");
+					$countNotifis = DB::Executa("SELECT COUNT(*) AS quant FROM site_gallery WHERE vis = '0'", []);
 					$countNotifis = intval($countNotifis[0]['quant']);
 					if($countNotifis > 99) { $countNotifis = '99'; }
 					?>

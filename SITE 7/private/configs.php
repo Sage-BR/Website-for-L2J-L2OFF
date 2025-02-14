@@ -3,9 +3,9 @@
 ###########################################################
 ##                   Configurações                       ##
 ###########################################################
-$server_name = 'Quake'; // Nome do servidor
-$server_chronicle = 'Interlude'; // Crônica do servidor
-$server_url = 'www.l2quake.com'; // Digite exatamente o URL onde se encontra este site (exemplo: www.l2server.com)
+$server_name = 'Catalyst'; // Nome do servidor
+$server_chronicle = 'Classic C2 Remaster'; // Crônica do servidor
+$server_url = 'l2.4teambr.com'; // Digite exatamente o URL onde se encontra este site (exemplo: www.l2server.com)
 
 
 ###########################################################
@@ -15,17 +15,18 @@ $server_url = 'www.l2quake.com'; // Digite exatamente o URL onde se encontra est
 # Qual método de conexão você irá utilizar? (recomendamos MySQLi ou PDO-MySQL)
 $conMethod = 3; // 1 = MySQL, 2 = MySQLi, 3 = PDO-MySQL
 
-$host = '198.50.173.200'; // Endereço do host
-$dbnm = 'l2jdb'; // Nome do banco
+$host = '167.114.114.31'; // Endereço do host
+$dbnm = 'l2jdb2'; // Nome do banco
 $user = 'root'; // Usuário
-$pass = 'eric'; // Senha
+$pass = '142536'; // Senha
+$port = '3307';
 
 // $pass = 'tcd$5%)A,@-3'; // Senha
 
 ###########################################################
 ##                    Server Status                      ##
 ###########################################################
-$serverIp = '198.50.173.200'; // IP do DB (para buscar o status do servidor)
+$serverIp = '167.114.114.31'; // IP do DB (para buscar o status do servidor)
 $loginPort = '2106'; // porta do login/auth
 $gamePort = '7777'; // porta do game
 
@@ -92,7 +93,7 @@ $sumH = 0; // Caso a hora esteja sendo exibida incorretamente, acrescente ou dim
 ###########################################################
 ##                  Cadastro de Contas                   ##
 ###########################################################
-$suffixActive = 1; // Ativar sufixo no login? (método de segurança que acrescenta 3 valores aleatórios no login do usuário, para evitar roubo de contas através de listas de logins com senhas que outros admins possuem) (1 = Sim | 0 = Não)
+$suffixActive = 0; // Ativar sufixo no login? (método de segurança que acrescenta 3 valores aleatórios no login do usuário, para evitar roubo de contas através de listas de logins com senhas que outros admins possuem) (1 = Sim | 0 = Não)
 $forceSuffix = 0; // O sufixo é obrigatório? (1 = Sim | 0 = Não) (Se definir '0', os usuários terão a opção "não quero isso" que ignora o sufixo)
 $downRegfile = 1; // Download de arquivo TXT após cadastro bem sucedido? (1 = Sim | 0 = Não)
 $passRegfile = 1; // Exibir senha no arquivo TXT gerado após cadastro bem sucedido? (1 = Sim | 0 = Não)
@@ -148,9 +149,6 @@ $bossJwlIds = "6656,6657,6658,6659,6660,6661,8191"; // IDs das Boss Jewels (Baiu
 $adnBillionItem = 0; // Existe algum item no servidor que corresponde a 1kkk de adena? Se sim, insira o ID desse item. Ele será somado às adenas no Top Adena.
 $showPlayersOn = 1; // Exibir quantidade de jogadores online? (1 = Sim | 0 = Não)
 
-# Exibir box de Chat Online? (1 = Sim | 0 = Não)
-define('CHATON', 1);
-
 ###########################################################
 ##                      Facebook                         ##
 ###########################################################
@@ -175,7 +173,7 @@ $coinCos = '1.00'; // Valor dessa quantidade
 
 $defaultLang = 'PT'; // Idioma padrão do site (Escolha entre: PT, EN ou ES) - O site conta com um sistema inteligente que detecta o idioma do navegador do usuário e exibe tudo naquele idioma, mas caso não consigamos detectar ou caso o navegador esteja num idioma diferente dos três citados anteriormente, o idioma setado aqui será o exibido
 
-$gmt = '0'; // Se os scripts do site estiverem num horário adiantado ou atrasado, altere o GMT. Exemplo: -1 (-1 hora), +3 (+3 horas), etc
+$gmt = '-3'; // Se os scripts do site estiverem num horário adiantado ou atrasado, altere o GMT. Exemplo: -1 (-1 hora), +3 (+3 horas), etc
 
 $bannerDelay = 25; // De quantos em quantos segundos os banners na página inicial se revesam?
 

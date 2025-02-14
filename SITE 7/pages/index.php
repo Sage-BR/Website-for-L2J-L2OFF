@@ -53,6 +53,9 @@ $(document).ready(function(){
 </style>
 <?php
 $banners = Index::Banners();
+if (!is_array($banners)) {
+    $banners = []; // Garante que sempre teremos um array para evitar o erro
+}
 $countBanners = count($banners);
 if($countBanners > 0) { ?>
 <div class='banner'>

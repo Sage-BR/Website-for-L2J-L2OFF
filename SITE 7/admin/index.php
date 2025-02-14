@@ -23,10 +23,10 @@
 */
 
 
-error_reporting(0);
-ini_set('error_reporting', 0);
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
+error_reporting(1);
+ini_set('error_reporting', 1);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 ini_set('default_charset', 'UTF-8');
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -42,7 +42,7 @@ require('private/functions.php');
 
 require('../private/configs.php');
 
-if(!isset($port)) { $port = ''; }
+if(!isset($port)) { $port = '3307'; }
 
 require('../private/classes/DB.php');
 new DB($conMethod, $host, $user, $pass, $dbnm, $port);

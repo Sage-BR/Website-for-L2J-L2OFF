@@ -41,6 +41,11 @@ if($genNew) {
 	require_once('private/classes/classStats.php');
 	
 	$query = Stats::OlympiadAllHeroes();
+	
+	if (!is_array($query)) {
+		$query = []; // Garante que $query seja sempre um array
+	}
+	
 	if(count($query) > 0) {
 		
 		function get3Job($val) {

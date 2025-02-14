@@ -101,7 +101,7 @@ $updated = time();
 $line = "\n<configs>\n<atualstudio>Cache script by Atualstudio.com</atualstudio>\n<updated>".$updated."</updated>\n<delay>".$cacheDelayMin."</delay>\n<rcount>".$countTopCLAN."</rcount>\n</configs>";
 if($showRankReg == 1 || ($showRankReg == 0 && time() > $dateReg)) {
 	$query = Stats::TopClan($countTopCLAN);
-	if(count($query) > 0) {
+	if (is_array($query) && count($query) > 0) {
 		for($i=0, $c=count($query); $i < $c; $i++) {
 			$line .= "\n<line>\n";
 			$line .= "<pos>".($i+1)."</pos>\n";

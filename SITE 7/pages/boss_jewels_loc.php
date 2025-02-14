@@ -40,6 +40,9 @@ if($genNew) {
 		require_once('private/classes/classStats.php');
 		
 		$query = Stats::BossJwlLoc($bossJwlIds);
+		if (!is_array($query)) {
+			$query = []; // Garante que $query seja sempre um array
+		}
 		if(count($query) > 0) {
 			
 			require_once('private/includes/itemlist.php');

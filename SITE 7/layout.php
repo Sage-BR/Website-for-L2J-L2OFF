@@ -171,17 +171,25 @@ echo "
 				</div>
 				<div class='indexRank'>
 					";
-					$xml = @simplexml_load_file("cache/toppvp.xml"); $line = @$xml->line;
-					if(count($line) < $asideRankCount) { $asideRankCount = count($line); }
-					if($asideRankCount > 0) {
-						for($i=0, $c=$asideRankCount; $i < $c; $i++) {
-							echo "<div>".$line[$i]->pos."&ordm;&nbsp;&nbsp; ".$line[$i]->name." <span>".$line[$i]->pvp." pvps</span></div>";
-						}
-					} else {
-						for($i=1, $c=(!empty($asideRankCount) ? intval($asideRankCount) : 3); $i <= $c; $i++) {
-							echo "<div>".$i."&ordm;&nbsp;&nbsp; Player <span>0 pvps</span></div>";
-						}
-					}
+$xml = @simplexml_load_file("cache/toppvp.xml"); 
+
+// Garante que $line seja sempre um array
+$line = ($xml !== false && isset($xml->line)) ? (array)$xml->line : [];
+
+if (count($line) < $asideRankCount) { 
+    $asideRankCount = count($line); 
+}
+
+if ($asideRankCount > 0) {
+    for ($i = 0, $c = $asideRankCount; $i < $c; $i++) {
+        echo "<div>".$line[$i]->pos."&ordm;&nbsp;&nbsp; ".$line[$i]->name." <span>".$line[$i]->pvp." pvps</span></div>";
+    }
+} else {
+    for ($i = 1, $c = (!empty($asideRankCount) ? intval($asideRankCount) : 3); $i <= $c; $i++) {
+        echo "<div>".$i."&ordm;&nbsp;&nbsp; Player <span>0 pvps</span></div>";
+    }
+}
+
 					echo "
 				</div>
 				<div class='vermais'>

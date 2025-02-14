@@ -1,192 +1,151 @@
 <?php
-
 class DB {
-	
-	private static $con;
+    private static $con;
+    private static $dbnm;
+    private static $conMethod;
+    public static $lastInsertID;
 
-	private static $dbnm;
+    public function __construct(int $conMethod, string $host = '', string $user = '', string $pass = '', string $dbnm = '', string $port = '') {
+        if (!empty($host) && !empty($user) && !empty($dbnm)) {
+            self::$conMethod = $conMethod;
 
-	private static $conMethod;
+            try {
+                switch ($conMethod) {
+                    case 1: // MySQL (deprecated)
+                        if (function_exists('mysql_connect')) {
+                            self::$con = @mysql_connect($host, $user, $pass) ?: throw new Exception("Failed to connect! #MySQL");
+                            if (!@mysql_select_db($dbnm, self::$con)) {
+                                self::$dbnm = $dbnm;
+                            }
+                        } else {
+                            throw new Exception("MySQL extension is deprecated in PHP 8");
+                        }
+                        break;
 
-	public static $lastInsertID;
+                    case 2: // MySQLi
+                        self::$con = @mysqli_connect($host, $user, $pass, $dbnm);
+                        if (!self::$con) {
+                            throw new Exception("Failed to connect! #MySQLi");
+                        }
+                        break;
 
-	function __construct($conMethod, $host='', $user='', $pass='', $dbnm='', $port='') {
-		
-		if(!empty($host) && !empty($user) && !empty($dbnm)) {
-			
-			DB::$conMethod = $conMethod;
-			
-			if($conMethod == 1) {
-				
-				# MySQL
-				
-				DB::$con = @mysql_connect($host, $user, $pass) or die("Failed to connect! #MySQL");
-				if(!@mysql_select_db(DB::$con, $dbnm)) {
-					DB::$dbnm = $dbnm;
-				}
-				
-			} else if($conMethod == 2) {
-				
-				# MySQLi
-				
-				DB::$con = @mysqli_connect($host, $user, $pass) or die("Failed to connect! #MySQLi");
-				if(!@mysqli_select_db(DB::$con, $dbnm)) {
-					DB::$dbnm = $dbnm;
-				}
-				
-			} else if($conMethod == 3) {
-				
-				# PDO-MySQL
-				
-				try {
-					DB::$con = new PDO("mysql:host=".$host.";dbname=".$dbnm."", $user, $pass);
-				} catch (PDOException $e) {
-					echo "Failed to connect! #PDO-MySQL";
-					exit;
-				}
-				
-			} else {
-				return false;
-			}
-			
-		} else {
-			return false;
-		}
-		
-	}
-	
-	public static function Executa($sql, $key='') {
-		
-		if(!empty(DB::$con) && !empty($sql)) {
-			
-			$sql_ini = strtoupper(substr(trim($sql), 0, 6));
-			
-			if(DB::$conMethod == 1) {
-				
-				# MySQL
-				
-				if(!empty(DB::$dbnm)) {
-					@mysql_select_db("".DB::$dbnm."", DB::$con) or die("Failed connection to database! #MySQL");
-				}
-				
-				$query = @mysql_query(DB::$con, $sql);
-				if(!$query) {
-					return false;
-				}
-				
-				if($sql_ini == 'SELECT') {
-					
-					$array = array();
-					while ($result = mysql_fetch_assoc($query)) {
-						$array[] = $result;
-					}
-					
-					return $array;
-					
-				} else if($sql_ini == 'INSERT') {
-					
-					DB::$lastInsertID = mysql_insert_id(DB::$con);
-					
-					return true;
-					
-				} else {
-					
-					return true;
-					
-				}
-				
-			} else if(DB::$conMethod == 2) {
-				
-				# MySQLi
-				
-				if(!empty(DB::$dbnm)) {
-					@mysqli_select_db(DB::$con, DB::$dbnm) or die("Failed connection to database! #MySQLi");
-				}
-				
-				$query = @mysqli_query(DB::$con, $sql);
-				if(!$query) {
-					return false;
-				}
-				
-				if($sql_ini == 'SELECT') {
-					
-					$array = array();
-					while ($result = mysqli_fetch_assoc($query)) {
-						$array[] = $result;
-					}
-					
-					return $array;
-					
-				} else if($sql_ini == 'INSERT') {
-					
-					DB::$lastInsertID = mysqli_insert_id(DB::$con);
-					
-					return true;
-					
-				} else {
-					
-					return true;
-					
-				}
-				
-			} else if(DB::$conMethod == 3) {
-				
-				# PDO-MySQL
-				
-				$query = DB::$con->prepare($sql);
-				$query->execute();
-				
-				if(empty($query) || $query->errorCode() != 0) {
-					return false;
-				}
+                    case 3: // PDO-MySQL
+                        $dsn = "mysql:host={$host};dbname={$dbnm}";
+                        $options = [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES => false,
+                        ];
+                        self::$con = new PDO($dsn, $user, $pass, $options);
+                        break;
 
-				if($sql_ini == 'SELECT') {
+                    default:
+                        throw new Exception("Invalid connection method");
+                }
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+                throw $e;
+            }
+        } else {
+            throw new Exception("Incomplete connection parameters");
+        }
+    }
 
-					$array = array();
-					while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
-						$array[] = $result;
-					}
+public static function Executa(string $sql, array $params = []): array|bool {
+    if (empty(self::$con) || empty($sql)) {
+        return false;
+    }
 
-					return $array;
+    $sql_ini = strtoupper(substr(trim($sql), 0, 6));
 
-				} else if($sql_ini == 'INSERT') {
+    try {
+        switch (self::$conMethod) {
+            case 1: // MySQL (deprecated)
+                // MySQL não suporta parâmetros preparados diretamente
+                if (!empty(self::$dbnm)) {
+                    @mysql_select_db(self::$dbnm, self::$con);
+                }
+                $query = @mysql_query($sql, self::$con);
+                if (!$query) return false;
 
-					DB::$lastInsertID = @DB::$con->lastInsertId();
+                return match($sql_ini) {
+                    'SELECT' => mysql_fetch_all($query),
+                    'INSERT' => self::handleMySQLInsert($query),
+                    default => true
+                };
 
-					if(empty(DB::$lastInsertID)) {
+            case 2: // MySQLi
+                // MySQLi requer preparação manual
+                if (!empty(self::$dbnm)) {
+                    mysqli_select_db(self::$con, self::$dbnm);
+                }
+                $stmt = mysqli_prepare(self::$con, $sql);
+                if (!$stmt) return false;
 
-						$query = DB::$con->prepare("SELECT @@IDENTITY AS lastInsertID");
-						$query->execute();
-						$result = $query->fetch(PDO::FETCH_ASSOC);
+                if (!empty($params)) {
+                    $types = str_repeat('s', count($params)); // Todos os parâmetros como string
+                    mysqli_stmt_bind_param($stmt, $types, ...$params);
+                }
 
-						DB::$lastInsertID = $result['lastInsertID'];
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
 
-					}
+                return match($sql_ini) {
+                    'SELECT' => mysqli_fetch_all($result, MYSQLI_ASSOC),
+                    'INSERT' => self::handleMySQLiInsert($stmt),
+                    default => true
+                };
 
-					return true;
+            case 3: // PDO-MySQL
+                $stmt = self::$con->prepare($sql);
+                $stmt->execute($params);
 
-				} else {
+                return match($sql_ini) {
+                    'SELECT' => $stmt->fetchAll(),
+                    'INSERT' => self::handlePDOInsert($stmt),
+                    default => true
+                };
 
-					return true;
+            default:
+                return false;
+        }
+    } catch (Exception $e) {
+        error_log($e->getMessage());
+        return false;
+    }
+}
 
-				}
-				
-			} else {
-				return false;
-			}
-			
-		}
-		
-		return false;
-	}
+    private static function handleMySQLInsert($query): bool {
+        self::$lastInsertID = mysql_insert_id(self::$con);
+        return true;
+    }
 
-	public static function close() {
-		if(DB::$conMethod == 1) {
-			@mysql_close(DB::$con);
-		} else if(DB::$conMethod == 2) {
-			@mysqli_close(DB::$con);
-		}
-		DB::$con = '';
-	}
-	
+    private static function handleMySQLiInsert($query): bool {
+        self::$lastInsertID = mysqli_insert_id(self::$con);
+        return true;
+    }
+
+    private static function handlePDOInsert($query): bool {
+        self::$lastInsertID = self::$con->lastInsertId();
+        if (empty(self::$lastInsertID)) {
+            $idQuery = self::$con->query("SELECT @@IDENTITY AS lastInsertID");
+            $result = $idQuery->fetch();
+            self::$lastInsertID = $result['lastInsertID'];
+        }
+        return true;
+    }
+
+    public static function close(): void {
+        switch (self::$conMethod) {
+            case 1:
+                if (function_exists('mysql_close')) {
+                    @mysql_close(self::$con);
+                }
+                break;
+            case 2:
+                mysqli_close(self::$con);
+                break;
+        }
+        self::$con = null;
+    }
 }

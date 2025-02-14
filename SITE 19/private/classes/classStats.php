@@ -49,13 +49,13 @@ class Stats {
 		
 		if($adnBillionItem != 0) {
 			$sql .= "
-					IFNULL( (SELECT (SUM(I2.count) * 1000000000) FROM items AS I2 WHERE I2.owner_id = C.charId AND I2.item_id = '".$adnBillionItem."' GROUP BY I2.owner_id) , 0)
+					IFNULL( (SELECT (SUM(I2.count) * 1000000000) FROM items AS I2 WHERE I2.owner_id = C.obj_Id AND I2.item_id = '".$adnBillionItem."' GROUP BY I2.owner_id) , 0)
 					+
 				";
 		}
 				
 		$sql .= "
-				IFNULL( (SELECT SUM(I1.count) FROM items AS I1 WHERE I1.owner_id = C.charId AND I1.item_id = '57' GROUP BY I1.owner_id) , 0)
+				IFNULL( (SELECT SUM(I1.count) FROM items AS I1 WHERE I1.owner_id = C.obj_Id AND I1.item_id = '57' GROUP BY I1.owner_id) , 0)
 			) AS adenas
 		FROM 
 			characters AS C 
@@ -81,7 +81,7 @@ class Stats {
 			FROM
 				clan_data AS C
 			LEFT JOIN
-				characters AS P ON P.charId = C.leader_id
+				characters AS P ON P.obj_Id = C.leader_id
 			ORDER BY
 				C.clan_level DESC, C.reputation_score DESC, membros DESC
 			LIMIT ".$limit."
@@ -102,7 +102,7 @@ class Stats {
 			FROM
 				olympiad_nobles AS O
 			LEFT JOIN
-				characters AS C ON C.charId = O.charId
+				characters AS C ON C.obj_Id = O.char_id
 			LEFT JOIN
 				clan_data AS D ON D.clan_id = C.clanid 
 			ORDER BY olympiad_points DESC
@@ -124,7 +124,7 @@ class Stats {
 			FROM
 				heroes AS H
 			LEFT JOIN
-				characters AS C ON C.charId = H.charId
+				characters AS C ON C.obj_Id = H.char_id
 			LEFT JOIN
 				clan_data AS D ON D.clan_id = C.clanid 
 			WHERE
@@ -147,7 +147,7 @@ class Stats {
 			FROM
 				heroes AS H
 			LEFT JOIN
-				characters AS C ON C.charId = H.charId
+				characters AS C ON C.obj_Id = H.char_id
 			LEFT JOIN
 				clan_data AS D ON D.clan_id = C.clanid 
 			WHERE
@@ -167,7 +167,7 @@ class Stats {
 				N.name, 
 				N.level
 			FROM
-				grandboss_intervallist AS B
+				grandboss_data AS B
 			INNER JOIN
 				site_bosses AS N ON N.id = B.boss_id
 			ORDER BY respawn DESC, level DESC, name ASC
@@ -210,7 +210,7 @@ class Stats {
 			LEFT JOIN
 				clan_data AS C ON C.hasCastle = W.id
 			LEFT JOIN
-				characters AS P ON P.charId = C.leader_id
+				characters AS P ON P.obj_Id = C.leader_id
 		");
 		return $sql;
 		
@@ -225,7 +225,7 @@ class Stats {
 			FROM
 				siege_clans AS S
 			LEFT JOIN
-				clan_data AS C ON C.clanid = S.clanid
+				clan_data AS C ON C.clan_id = S.clan_id
 			WHERE
 				S.castle_id = '".$castle_id."'
 		");
@@ -245,7 +245,7 @@ class Stats {
 		FROM
 			items AS I
 		INNER JOIN
-			characters AS C ON C.charId = I.owner_id
+			characters AS C ON C.obj_Id = I.owner_id
 		LEFT JOIN
 			clan_data AS P ON P.clan_id = C.clanid
 		WHERE
@@ -254,7 +254,6 @@ class Stats {
 			I.owner_id, C.char_name, P.clan_name, I.item_id
 		ORDER BY
 			count DESC, C.char_name ASC
-
 		");
 		return $sql;
 		

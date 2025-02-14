@@ -4,6 +4,8 @@ class Email {
 
 	public static function sendEmail($contentEmail, $server_email, $title, $email) {
 		
+		// Acentuação UTF-8
+		
 		$contentEmail .= "<br /><b>".$GLOBALS['server_name']."</b><br /><a href='http://".$GLOBALS['server_url']."'>".strtolower($GLOBALS['server_url'])."</a><br />";
 		
 		if($GLOBALS['useSMTP'] != 1) {
@@ -20,27 +22,24 @@ class Email {
 			
 		} else {
 			
-			require 'private/PHPMailer-master/PHPMailerAutoload.php';
+			require 'private/PHPMailer-master/class.phpmailer.php';
+			require 'private/PHPMailer-master/class.phpmaileroauth.php';
+			require 'private/PHPMailer-master/class.smtp.php';
 			
 			$mail = new PHPMailer;
-			$mail->SMTPDebug = false;
 			$mail->isSMTP();
 			$mail->CharSet = 'utf-8';
+			$mail->SMTPDebug = 0;
 			$mail->Host = trim($GLOBALS['SMTP_host']);
+			$mail->Port = intval($GLOBALS['SMTP_port']);
 			$mail->SMTPAuth = true;
 			$mail->Username = trim($GLOBALS['SMTP_user']);
 			$mail->Password = trim($GLOBALS['SMTP_pass']);
-			$mail->SMTPSecure = trim($GLOBALS['SMTP_secu']);
-			$mail->Port = intval($GLOBALS['SMTP_port']);
-			
-			$mail->setFrom($server_email, $GLOBALS['server_name']);
+			if(!empty($GLOBALS['SMTP_secu'])){ $mail->SMTPSecure = trim($GLOBALS['SMTP_secu']); }
+			$mail->setFrom(trim($GLOBALS['SMTP_user']), trim($GLOBALS['server_name']));
 			$mail->addAddress($email);
-			$mail->addReplyTo($server_email, $GLOBALS['server_name']);
-			
-			$mail->isHTML(true);
-			
 			$mail->Subject = $title;
-			$mail->Body = $contentEmail;
+			$mail->msgHTML($contentEmail);
 			$mail->AltBody = strip_tags($contentEmail);
 			
 			if(!$mail->send()) {

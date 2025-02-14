@@ -1,12 +1,12 @@
 <?php
 
-$bnWidth = 460;
-$bnHeight = 183;
+$bnWidth = 496;
+$bnHeight = 200;
 
-$fbWidth = 460;
+$fbWidth = 496;
 $fbHeight = 214;
 
-$uniqueKey = 'H83NO84882IA9RR8918998289982';
+$uniqueKey = 'AION89123819992877178762618';
 
 $admref_ucp = '../ucp/';
 

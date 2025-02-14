@@ -1,14 +1,12 @@
 <?php
 
-$bnWidth = 461;
-$bnHeight = 183;
+$bnWidth = 448;
+$bnHeight = 170;
 
-$fbWidth = 400;
-$fbHeight = 180;
+$fbWidth = 448;
+$fbHeight = 220;
 
 $uniqueKey = 'AION89123819992877178762618';
 
 $admref_ucp = '../ucp/';
-
 $l2version = 2;
-
